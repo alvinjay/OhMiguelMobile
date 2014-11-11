@@ -64,7 +64,6 @@ public class Client {
 						new OutputStreamWriter(socket.getOutputStream())), true);
 
 				Log.e("TCP Client", "C: Sent.");
-
 				Log.e("TCP Client", "C: Done.");
 
 				// receive the message which the server sends back
@@ -96,7 +95,7 @@ public class Client {
 				// this socket
 				// after it is closed, which means a new socket instance has to
 				// be created.
-				socket.close();
+//				socket.close();
 			}
 
 		} catch (Exception e) {

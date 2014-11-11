@@ -22,9 +22,9 @@ import android.widget.TextView;
 
 public class ServerActivity extends Activity {
 
-//	 private ListView mList;
-//	    private ArrayList<String> arrayList;
-//	    private MyCustomAdapter mAdapter;
+	 private ListView mList;
+	    private ArrayList<String> arrayList;
+	    private MyCustomAdapter mAdapter;
 //	    private Client mClient;
 		private ServerSocket serverSocket;
 		private Socket clientSocket;
@@ -35,24 +35,24 @@ public class ServerActivity extends Activity {
 	    public void onCreate(Bundle savedInstanceState)
 	    {
 	        super.onCreate(savedInstanceState);
-	        setContentView(R.layout.activity_server);
+	        setContentView(R.layout.activity_server2);
 	        
-	        status = (TextView)findViewById(R.id.status);
+//	        status = (TextView)findViewById(R.id.status);
 	        
 	        // The default port number.
-	        int portNumber = 2222;
+//	        int portNumber = 2222;
 
 	        
 //	 
-//	        arrayList = new ArrayList<String>();
+	        arrayList = new ArrayList<String>();
 //	 
-//	        final EditText editText = (EditText) findViewById(R.id.editText);
-//	        Button send = (Button)findViewById(R.id.send_button);
+	        final EditText editText = (EditText) findViewById(R.id.editText);
+	        Button send = (Button)findViewById(R.id.send_button);
 //	 
 //	        //relate the listView from java to the one created in xml
-//	        mList = (ListView)findViewById(R.id.list);
-//	        mAdapter = new MyCustomAdapter(this, arrayList);
-//	        mList.setAdapter(mAdapter);
+	        mList = (ListView)findViewById(R.id.list);
+	        mAdapter = new MyCustomAdapter(this, arrayList);
+	        mList.setAdapter(mAdapter);
 	 
 	        // connect to the server
 	        new connectTask().execute(Client.SERVERPORT + "");
@@ -79,28 +79,35 @@ public class ServerActivity extends Activity {
 	 
 	    }
 	 
-	    public class connectTask extends AsyncTask<String,String,Client> {
+	    public class connectTask extends AsyncTask<String,String,Server> {
 	 
 	        @Override
-	        protected Client doInBackground(String... message) {
+	        protected Server doInBackground(String... message) {
 	        	
 	            //we create a Client object and
-	            mServer = new Server(status);
+	            mServer = new Server(new Server.OnMessageReceived() {
+	                @Override
+	                //here the messageReceived method is implemented
+	                public void messageReceived(String message) {
+	                    //this method calls the onProgressUpdate
+	                    publishProgress(message);
+	                }
+	            });
 	            mServer.run();
 //	 
 	            return null;
 	        }
 	 
-//	        @Override
-//	        protected void onProgressUpdate(String... values) {
-//	            super.onProgressUpdate(values);
-//	 
-//	            //in the arrayList we add the messaged received from server
-//	            arrayList.add(values[0]);
-//	            // notify the adapter that the data set has changed. This means that new message received
-//	            // from server was added to the list
-//	            mAdapter.notifyDataSetChanged();
-//	        }
+	        @Override
+	        protected void onProgressUpdate(String... values) {
+	            super.onProgressUpdate(values);
+	 
+	            //in the arrayList we add the messaged received from server
+	            arrayList.add(values[0]);
+	            // notify the adapter that the data set has changed. This means that new message received
+	            // from server was added to the list
+	            mAdapter.notifyDataSetChanged();
+	        }
 	    }
 
 }

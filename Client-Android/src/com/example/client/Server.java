@@ -9,6 +9,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import com.example.client.Client.OnMessageReceived;
+
 public class Server {
 
 	private String serverMessage;
@@ -22,6 +24,13 @@ public class Server {
 	private Socket clientSocket;
 	private TextView status;
 	
+	private DataInputStream is = null;
+	private PrintStream os = null;
+	
+	// This chat server can accept up to maxClientsCount clients' connections.
+	private static final int maxClientsCount = 10;
+	private static final ClientThread[] threads = new ClientThread[maxClientsCount];
+	
 	PrintWriter out;
 	BufferedReader in;
 
@@ -29,9 +38,8 @@ public class Server {
 	 * Constructor of the class. OnMessagedReceived listens for the messages
 	 * received from server
 	 */
-	public Server(TextView status) {
-		this.status = status;
-	
+	public Server(OnMessageReceived listener) {
+		mMessageListener = listener;
 	}
 
 	/**
@@ -61,16 +69,31 @@ public class Server {
          */
         try {
         	serverSocket = new ServerSocket(Client.SERVERPORT);
-          	status.setText("Running at port: " + Client.SERVERPORT);
+//          	status.setText("Running at port: " + Client.SERVERPORT);
+          	
+          	 /*
+             * Create input and output streams for this client.
+             */
+            
+//            is = new DataInputStream(serverSocket.getInputStream());
+//            os = new PrintStream(serverSocket.getOutputStream());
         } catch (IOException e) {
         	//failed to open socket
-        	status.setText("Failed to establish connection");
+        	Log.e("Error:", "Failed to establish connection");
         }
+       
         
         while (true) {
             try {
             	clientSocket = serverSocket.accept();
             	Log.d("Client","Connected");
+            	int i = 0;
+                for (i = 0; i < maxClientsCount; i++) {
+                   if (threads[i] == null) {
+                     (threads[i] = new ClientThread(clientSocket, threads)).start();
+                     break;
+                   }
+                 }
 //            	status.setText("Client connected");
             	break;
             } catch (IOException e) {

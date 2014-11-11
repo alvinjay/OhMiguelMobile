@@ -3,6 +3,7 @@
     <issue id="NewApi">
         <ignore path="src/com/aboullaite/client/Server.java" />
         <ignore path="src/com/aboullaite/client/ServerActivity.java" />
+        <ignore path="src/com/example/client/ClientThread.java" />
         <ignore path="src/com/example/client/Server.java" />
     </issue>
 </lint>
